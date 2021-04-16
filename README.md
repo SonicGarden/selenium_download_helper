@@ -27,11 +27,9 @@ end
 ```ruby
 it 'Download files' do
   visit export_path
-  click_on 'Export'
-  wait_for_downloaded do |file|
-    expect(file.basename.to_s).to eq 'export.txt'
-    expect(file.read).to eq 'Export!'
-  end
+  file = wait_for_downloaded { click_on 'Export' }
+  expect(file.basename.to_s).to eq 'export.txt'
+  expect(file.read).to eq 'Export!'
 end
 ```
 
