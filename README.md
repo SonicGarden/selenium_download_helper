@@ -28,7 +28,8 @@ end
 it 'Download files' do
   visit export_path
   file = wait_for_downloaded { click_on 'Export' }
-  expect(file.basename.to_s).to eq 'export.txt'
+  expect(file).to have_basename 'export.txt'
+  expect(file).to have_extname '.txt'
   expect(file.read).to eq 'Export!'
 end
 ```

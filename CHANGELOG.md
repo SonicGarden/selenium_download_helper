@@ -1,3 +1,7 @@
+## 0.3.0
+
+- Add Matchers
+
 ## 0.2.3
 
 - Fix bug
