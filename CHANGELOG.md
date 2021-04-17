@@ -1,3 +1,7 @@
+## 0.4.0
+
+- Remove Matchers
+
 ## 0.3.0
 
 - Add Matchers

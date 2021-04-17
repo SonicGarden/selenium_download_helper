@@ -28,8 +28,8 @@ end
 it 'Download files' do
   visit export_path
   file = wait_for_downloaded { click_on 'Export' }
-  expect(file).to have_basename 'export.txt'
-  expect(file).to have_extname '.txt'
+  expect(file.basename.to_s).to eq 'export.txt'
+  expect(file.extname).to eq  '.txt'
   expect(file.read).to eq 'Export!'
 end
 ```
@@ -37,6 +37,15 @@ end
 ## Browser support
 
 - Chrome
+
+**NOTE:** If non-ascii file names are not saved correctly, set the locale.
+
+```yaml
+- name: Set Locale
+  run: |
+    sudo locale-gen ja_JP.UTF-8
+    sudo update-locale LANG=ja_JP.UTF-8
+```
 
 ## Contributing
 

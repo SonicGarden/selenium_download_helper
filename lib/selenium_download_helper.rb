@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "selenium_download_helper/matchers"
 require_relative "selenium_download_helper/version"
 
 module SeleniumDownloadHelper
-  include Matchers
-
   def download_path
     File.join(Rails.root.join('tmp/data/downloads'), Thread.current.object_id.to_s)
   end
