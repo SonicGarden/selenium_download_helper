@@ -21,6 +21,7 @@ module SeleniumDownloadHelper
 
   def wait_for_downloaded(timeout: 10, interval: 0.2, all: false, &block)
     page.driver.browser.download_path = download_path
+    delete_downloaded_dir
     yield if block_given?
     Selenium::WebDriver::Wait.new(timeout: timeout, interval: interval).until { downloaded? }
     at_exit { delete_downloaded_dir }
