@@ -12,7 +12,8 @@ module SeleniumDownloadHelper
   end
 
   def downloaded?
-    downloaded_files.grep(/\.crdownload$/).none? && downloaded_files.any?
+    files = downloaded_files
+    files.grep(/\.crdownload$/).none? && files.any?
   end
 
   def delete_downloaded_dir
