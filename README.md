@@ -8,7 +8,7 @@ Add this line to your application's Gemfile:
 
 ```ruby
 group :test do
-  gem 'selenium_download_helper', github: 'SonicGarden/selenium_download_helper'
+  gem 'selenium_download_helper'
 end
 ```
 
