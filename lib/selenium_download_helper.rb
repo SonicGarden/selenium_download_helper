@@ -3,29 +3,27 @@
 require_relative "selenium_download_helper/version"
 
 module SeleniumDownloadHelper
-  def download_path
-    File.join(Rails.root.join('tmp/data/downloads'), Thread.current.object_id.to_s)
-  end
-
-  def downloaded_files
-    Dir[File.join(download_path, '*')].map { |filepath| Pathname.new(filepath) }
-  end
-
-  def downloaded?
-    files = downloaded_files
-    files.map(&:to_s).grep(/\.crdownload$/).none? && files.any?
-  end
-
-  def delete_downloaded_dir
-    FileUtils.rm_rf(download_path)
-  end
-
   def wait_for_downloaded(timeout: 10, interval: 0.2, all: false, &block)
+    download_path= mkdownloaddir
     page.driver.browser.download_path = download_path
-    delete_downloaded_dir
     yield if block_given?
-    Selenium::WebDriver::Wait.new(timeout: timeout, interval: interval).until { downloaded? }
-    at_exit { delete_downloaded_dir }
-    all ? downloaded_files : downloaded_files.first
+    Selenium::WebDriver::Wait.new(timeout: timeout, interval: interval).until { downloaded?(download_path) }
+    at_exit { FileUtils.rm_rf(download_path) }
+    downloaded_files(download_path).then { |files| all ? files : files.first }
   end
+
+  private
+
+    def mkdownloaddir
+      Dir.mktmpdir('SeleniumDownloadHelper_', Rails.root.join('tmp/data/downloads'))
+    end
+
+    def downloaded_files(download_path)
+      Dir[File.join(download_path, '*')].map { |filepath| Pathname.new(filepath) }
+    end
+
+    def downloaded?(download_path)
+      files = downloaded_files(download_path)
+      files.map(&:to_s).grep(/\.crdownload$/).none? && files.any?
+    end
 end
