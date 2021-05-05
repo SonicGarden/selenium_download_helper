@@ -1,31 +1,37 @@
 # frozen_string_literal: true
 
-require_relative "selenium_download_helper/version"
+require 'tmpdir'
+require 'fileutils'
+require 'selenium-webdriver'
+require 'active_support/concern'
+require_relative 'selenium_download_helper/version'
 
 module SeleniumDownloadHelper
   extend ActiveSupport::Concern
 
-  DOWNLOAD_BASE_DIR = 'tmp/data/downloads'
-  private_constant :DOWNLOAD_BASE_DIR
-
   included do
     after(:all) do
-      FileUtils.rm_rf(Rails.root.join(DOWNLOAD_BASE_DIR))
+      FileUtils.rm_rf(base_download_dir)
     end
   end
 
   def wait_for_downloaded(timeout: 10, interval: 0.2, all: false, &block)
     download_path= mkdownloaddir
     page.driver.browser.download_path = download_path
-    yield if block_given?
+    yield
     Selenium::WebDriver::Wait.new(timeout: timeout, interval: interval).until { downloaded?(download_path) }
     downloaded_files(download_path).then { |files| all ? files : files.first }
   end
 
   private
 
+    def base_download_dir
+      Rails.root.join('tmp/data/downloads')
+    end
+
     def mkdownloaddir
-      Dir.mktmpdir('SeleniumDownloadHelper_', Rails.root.join(DOWNLOAD_BASE_DIR))
+      FileUtils.mkdir_p(base_download_dir)
+      Dir.mktmpdir('selenium_download_helper__', base_download_dir)
     end
 
     def downloaded_files(download_path)
