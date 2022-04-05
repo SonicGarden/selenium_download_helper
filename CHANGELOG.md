@@ -1,3 +1,7 @@
+## 0.6.0
+
+- Support rails v7
+
 ## 0.5.0
 
 - Refactor
