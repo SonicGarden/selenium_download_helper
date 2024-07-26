@@ -1,3 +1,8 @@
+## 1.0.0
+
+- Drop support for ruby v2
+- Drop support for rails v6
+
 ## 0.6.0
 
 - Support rails v7
