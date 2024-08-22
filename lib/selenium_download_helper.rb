@@ -15,12 +15,12 @@ module SeleniumDownloadHelper
     end
   end
 
-  def wait_for_downloaded(timeout: 10, interval: 0.2, all: false, &block)
+  def wait_for_downloaded(timeout: 10, interval: 0.2, all: false, filename: nil, &block)
     download_path= mkdownloaddir
     page.driver.browser.download_path = download_path
     yield
-    Selenium::WebDriver::Wait.new(timeout: timeout, interval: interval).until { downloaded?(download_path) }
-    downloaded_files(download_path).then { |files| all ? files : files.first }
+    Selenium::WebDriver::Wait.new(timeout: timeout, interval: interval).until { downloaded?(download_path, filename:) }
+    downloaded_files(download_path, filename:).then { |files| all ? files : files.first }
   end
 
   private
@@ -34,12 +34,14 @@ module SeleniumDownloadHelper
       Dir.mktmpdir('selenium_download_helper__', base_download_dir)
     end
 
-    def downloaded_files(download_path)
-      Dir[File.join(download_path, '*')].map { |filepath| Pathname.new(filepath) }
+    def downloaded_files(download_path, filename: nil)
+      Dir[File.join(download_path, '*')]
+        .map { |filepath| Pathname.new(filepath) }
+        .select { |file| filename.nil? || filename === file.basename.to_s }
     end
 
-    def downloaded?(download_path)
-      files = downloaded_files(download_path)
+    def downloaded?(download_path, filename: nil)
+      files = downloaded_files(download_path, filename:)
       files.map(&:to_s).grep(/\.crdownload$/).none? && files.any?
     end
 end
