@@ -9,6 +9,9 @@ require_relative 'selenium_download_helper/version'
 module SeleniumDownloadHelper
   extend ActiveSupport::Concern
 
+  TEMPORARY_DOWNLOAD_FILENAME_PATTERN = /(\.crdownload|\/downloads.html)$/
+
+
   included do
     after(:all) do
       FileUtils.rm_rf(base_download_dir)
@@ -42,6 +45,6 @@ module SeleniumDownloadHelper
 
     def downloaded?(download_path, filename: nil)
       files = downloaded_files(download_path, filename:)
-      files.map(&:to_s).grep(/\.crdownload$/).none? && files.any?
+      files.map(&:to_s).grep(TEMPORARY_DOWNLOAD_FILENAME_PATTERN).none? && files.any?
     end
 end
