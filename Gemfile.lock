@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    selenium_download_helper (1.2.0)
+    selenium_download_helper (1.2.1)
       rails (>= 7.0)
       selenium-webdriver
 
