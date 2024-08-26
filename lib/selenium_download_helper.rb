@@ -5,6 +5,7 @@ require 'fileutils'
 require 'selenium-webdriver'
 require 'active_support/concern'
 require_relative 'selenium_download_helper/version'
+require_relative 'selenium_download_helper/errors'
 
 module SeleniumDownloadHelper
   extend ActiveSupport::Concern
@@ -24,6 +25,8 @@ module SeleniumDownloadHelper
     yield
     Selenium::WebDriver::Wait.new(timeout: timeout, interval: interval).until { downloaded?(download_path, filename:) }
     downloaded_files(download_path, filename:).then { |files| all ? files : files.first }
+  rescue Selenium::WebDriver::Error::TimeoutError => e
+    raise TimeoutError.new(e, download_path)
   end
 
   private
