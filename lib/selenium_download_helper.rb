@@ -10,7 +10,7 @@ require_relative 'selenium_download_helper/errors'
 module SeleniumDownloadHelper
   extend ActiveSupport::Concern
 
-  TEMPORARY_DOWNLOAD_FILENAME_PATTERN = /(\.crdownload|\/downloads.html)$/
+  TEMPORARY_DOWNLOAD_FILENAME_PATTERN = /(\.crdownload|^downloads.html)$/
 
 
   included do
@@ -43,11 +43,11 @@ module SeleniumDownloadHelper
     def downloaded_files(download_path, filename: nil)
       Dir[File.join(download_path, '*')]
         .map { |filepath| Pathname.new(filepath) }
+        .reject { |file| TEMPORARY_DOWNLOAD_FILENAME_PATTERN.match?(file.basename.to_s) }
         .select { |file| filename.nil? || filename === file.basename.to_s }
     end
 
     def downloaded?(download_path, filename: nil)
-      files = downloaded_files(download_path, filename:)
-      files.map(&:to_s).grep(TEMPORARY_DOWNLOAD_FILENAME_PATTERN).none? && files.any?
+      downloaded_files(download_path, filename:).any?
     end
 end
